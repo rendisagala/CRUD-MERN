@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddUser = () => {
+const UpdateUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("Male");
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const saveUser = async (e) => {
+  useEffect(() => {
+    getUserById();
+  }, []);
+
+  const getUserById = async () => {
+    const response = await axios.get(`http://localhost:5000/user/${id}`);
+    setName(response.data.name);
+    setEmail(response.data.email);
+    setGender(response.data.gender);
+  };
+
+  const editUser = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/user`, {
+      await axios.patch(`http://localhost:5000/user/${id}`, {
         name,
         gender,
         email,
@@ -25,7 +37,7 @@ const AddUser = () => {
   return (
     <div className="columns">
       <div className="column is-half">
-        <form action="" onSubmit={saveUser}>
+        <form action="" onSubmit={editUser}>
           <div className="field">
             <label className="label">Name</label>
             <div className="control">
@@ -69,7 +81,7 @@ const AddUser = () => {
           <div className="field">
             <div className="control">
               <button type="submit" className="button is-success">
-                SAVE
+                UPDATE
               </button>
             </div>
           </div>
@@ -79,4 +91,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default UpdateUser;

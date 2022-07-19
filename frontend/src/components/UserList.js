@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const userList = () => {
@@ -11,6 +12,15 @@ const userList = () => {
   const getUser = async () => {
     const response = await axios.get(`http://localhost:5000/user`);
     setUser(response.data);
+  };
+
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/user/${id}`);
+      getUser();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -34,16 +44,26 @@ const userList = () => {
                 <td>{user.email}</td>
                 <td>{user.gender}</td>
                 <td>
-                  <button className="button is-info is-small">UPDATE</button>
-                  <button className="button is-danger is-small">DELETE</button>
+                  <Link
+                    to={`update/${user._id}`}
+                    className="button is-info is-small"
+                  >
+                    UPDATE
+                  </Link>
+                  <button
+                    onClick={() => deleteUser(user._id)}
+                    className="button is-danger is-small"
+                  >
+                    DELETE
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
-        <a href="/addUser">
-          <button className="button is-info is-medium">ADD USER</button>
-        </a>
+        </table>{" "}
+        <Link to="addUser" className="button is-success">
+          ADD USER
+        </Link>
       </div>
     </div>
   );
